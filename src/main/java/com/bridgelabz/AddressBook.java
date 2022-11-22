@@ -15,7 +15,7 @@ public class AddressBook {
 
 
 
-    public void getContactDetails(){
+    public void getContactDetails() {
         System.out.println("Enter details : ");
         Contact person = new Contact();
         person.getPersonDetails();
