@@ -4,6 +4,8 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.CSVWriter;
 import com.opencsv.exceptions.CsvException;
+import org.json.JSONArray;
+
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -23,7 +25,7 @@ public class AddressbookMain {
 
 
 
-    public static void main(String[] args) throws IOException {
+    public static <JSONParser> void main(String[] args) throws IOException {
         HashMap<String,AddressBook> dictionary = new HashMap<>();
         AddressBook book = new AddressBook();
         Scanner input = new Scanner(System.in);
@@ -237,5 +239,34 @@ public class AddressbookMain {
 
             e.printStackTrace();
         }
+
+        // Reading and Writing JSON.
+
+        JSONArray jsonPersons = new JSONArray();
+
+        dictionary.keySet().stream().forEach(bookname -> dictionary.get(bookname).getPersons()
+                .stream().forEach(prsn -> jsonPersons.add(prsn.getContactJSON())));
+
+        Path jsonPath = Paths.get("C:/Users/micro/Downloads/persons-json.json");
+        try {
+            Files.deleteIfExists(jsonPath);
+            Files.writeString(jsonPath, jsonPersons.toJSONString(), StandardOpenOption.CREATE);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        JSONParser jsonParser = new JSONParser();
+
+        System.out.println("\nReading data from JSON file:");
+        try {
+            Object object = jsonParser.parse(Files.newBufferedReader(jsonPath));
+            JSONArray personsList = (JSONArray) object;
+            System.out.println(personsList);
+        } catch (IOException | ParseException e) {
+
+            e.printStackTrace();
+        }
+
     }
 }
